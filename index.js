@@ -29,7 +29,7 @@ function loop(){
 	}
 
 };
-    process.on('beforeExit',()=>{setTimeout(loop,1000)});
+process.on('beforeExit',()=>{setTimeout(loop,1000)});
 
 loop();
 
@@ -38,5 +38,5 @@ function linux(ip,dev){
 }
 
 function win32(ip){
-    cp.exec('powershell remove-netipaddress '+ip+' -confirm:$false');
+	cp.exec('powershell remove-netipaddress '+ip+' -confirm:$false');
 }
