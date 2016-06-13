@@ -3,6 +3,13 @@
 const nets=require('os').networkInterfaces;
 const exec = require('child_process').exec;
 
+if(process.getuid){
+	if(process.getuid()!=0){
+		console.log('ERR:require run as root/sudo');
+		process.exit(1);
+	}
+}
+		
 
 
 function rm_address(){
@@ -19,7 +26,7 @@ function rm_address(){
 
 		}
 	}
-	setTimeout(rm_address,1000);
+	setTimeout(rm_address,100);
 	};
 rm_address();
 
