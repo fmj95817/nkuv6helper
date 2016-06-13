@@ -2,3 +2,5 @@
 remove useless extra ipv6 stateless addresses given by the stupid routers.
 
 so that you can access ipv6 net with the correct ipv6 address.
+
+supporting linux and windows. maybe mac as well but not tested.
