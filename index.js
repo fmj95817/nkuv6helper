@@ -1,3 +1,5 @@
+#!/bin/node
+
 const nets=require('os').networkInterfaces;
 const exec = require('child_process').exec;
 
