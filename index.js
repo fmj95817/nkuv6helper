@@ -1,15 +1,25 @@
 #!/bin/node
 'use strict';
-const nets=require('os').networkInterfaces;
+const nets = require('os').networkInterfaces;
 const cp = require('child_process');
-
 if(process.getuid){
-	if(process.getuid()!=0){
-		console.log('ERR:require run as root/sudo');
+	if(process.getuid()==0)
+		loop();
+	else{
+		console.error('please run as root');
 		process.exit(1);
 	}
 }
+else{
+	cp.exec('sfc',(r,s,e)=>{
+		if(s.length<70){
+			console.error('please run administritive');
+			process.exit(1);
+		}
+		else loop();
+	});
 
+}
 
 function loop(){
 	console.log('\x1Bc');
@@ -31,7 +41,7 @@ function loop(){
 };
 process.on('beforeExit',()=>{setTimeout(loop,1000)});
 
-loop();
+
 
 function linux(ip,dev){
 	cp.exec('ip -6 address del '+ip+'/64 dev '+dev);
@@ -40,3 +50,4 @@ function linux(ip,dev){
 function win32(ip){
 	cp.exec('powershell remove-netipaddress '+ip+' -confirm:$false');
 }
+
