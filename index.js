@@ -1,7 +1,7 @@
 #!/bin/node
 'use strict';
 const nets=require('os').networkInterfaces;
-const exec = require('child_process').exec;
+const cp = require('child_process');
 
 if(process.getuid){
 	if(process.getuid()!=0){
@@ -11,7 +11,7 @@ if(process.getuid){
 }
 
 
-function rm_address(){
+function loop(){
 	console.log('\x1Bc');
 	var devs=nets();
 	for(var dev in devs){
@@ -27,14 +27,16 @@ function rm_address(){
 
 		}
 	}
-	setTimeout(rm_address,1000);
-	};
-rm_address();
+
+};
+    process.on('beforeExit',()=>{setTimeout(loop,1000)});
+
+loop();
 
 function linux(ip,dev){
-	exec('ip -6 address del '+ip+'/64 dev '+dev);
+	cp.exec('ip -6 address del '+ip+'/64 dev '+dev);
 }
 
-function win32(ip,dev){
-	
+function win32(ip){
+    cp.exec('powershell remove-netipaddress '+ip+' -confirm:$false');
 }
