@@ -12,7 +12,7 @@ function rm_address(){
 			if(add.address.search(/2001:250:401:3610/)!=-1){
 				continue;
 			}
-			console.log('delete address'+add.address);
+			console.log('delete address '+add.address);
 			eval(process.platform+'(\''+add.address+'\',\''+dev+'\')');
 
 		}
