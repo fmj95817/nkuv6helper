@@ -1,5 +1,5 @@
 #!/bin/node
-
+'use strict';
 const nets=require('os').networkInterfaces;
 const exec = require('child_process').exec;
 
@@ -9,16 +9,17 @@ if(process.getuid){
 		process.exit(1);
 	}
 }
-		
 
 
 function rm_address(){
+	console.log('\x1Bc');
 	var devs=nets();
 	for(var dev in devs){
 		for(var add of devs[dev]){
 			if(add.family!='IPv6')continue;
 			if(add.address.search(/2001:250:401:/)==-1)continue;
 			if(add.address.search(/2001:250:401:3610/)!=-1){
+				console.log('using address '+add.address);
 				continue;
 			}
 			console.log('delete address '+add.address);
@@ -26,7 +27,7 @@ function rm_address(){
 
 		}
 	}
-	setTimeout(rm_address,100);
+	setTimeout(rm_address,1000);
 	};
 rm_address();
 
