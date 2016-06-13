@@ -1,12 +1,12 @@
-const os=require('os');
+const nets=require('os').networkInterfaces;
 const exec = require('child_process').exec;
 
 
 
 function rm_address(){
-	var netints=os.networkInterfaces();
-	for(var dev in netints){
-		for(var add of netints[dev]){
+	var devs=nets();
+	for(var dev in devs){
+		for(var add of devs[dev]){
 			if(add.family!='IPv6')continue;
 			if(add.address.search(/2001:250:401:/)==-1)continue;
 			if(add.address.search(/2001:250:401:3610/)!=-1){
