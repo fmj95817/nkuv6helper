@@ -1,7 +1,7 @@
 {
   "name": "nkv6helper",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.0",
+  "description": "useless ipv6 addresses remover",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
