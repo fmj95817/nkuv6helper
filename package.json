@@ -8,5 +8,7 @@
   },
   "author": "",
   "license": "GPL-3.0",
-  "dependencies": {}
+  "dependencies": {
+    "yargs": "^4.7.1"
+  }
 }
