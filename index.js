@@ -50,11 +50,10 @@ var rm_prefix;
 var prefix;
 //prepare address
 if(args.rm_prefix&&args.prefix){
-	if(args.prefix.split(':').length!=5){
-		console.err('prefix must be 64 bit and end with \':\'');
+	if(args.prefix.split(':').length!=5||args.prefix.split(':')[4]!=''){
+		console.error('prefix must be 64 bit , with 4 parts splited by 3 \':\', and end with \':\'');
 		process.exit(1);
 	}
-	console.log('using frefix ',args.prefix);
 	rm_prefix=args.rm_prefix;
 	prefix=args.prefix;
 }
@@ -78,11 +77,11 @@ if(args.device){
 		if(add.family!='IPv6')continue;
 		if(add.address.search(RegExp(rm_prefix))==-1)continue;
 		if(add.address.search(RegExp(prefix))!=-1){
-			console.log('using address '+add.address);
+			console.log('using address '+add.address+' on device '+select_dev);
 			usable=true;
 			continue;
 		}
-		console.log('delete address '+add.address);
+		console.log('delete address '+add.address+' on device '+select_dev);
 		eval(process.platform+'_rm(\''+add.address+'\',\''+dev+'\')');
 	}
 	process.on('beforeExit',()=>{setTimeout(loop_spec,1000)});
@@ -94,11 +93,11 @@ else{
 			if(add.family!='IPv6')continue;
 			if(add.address.search(RegExp(rm_prefix))==-1)continue;
 			if(add.address.search(RegExp(prefix))!=-1){
-				console.log('using address '+add.address);
+				console.log('using address '+add.address+' on device '+dev);
 				usable=true;
 				continue;
 			}
-			console.log('delete address '+add.address);
+			console.log('delete address '+add.address+' on device '+dev);
 			if(''==select_dev)select_dev=dev;
 			eval(process.platform+'_rm(\''+add.address+'\',\''+dev+'\')');
 		}
@@ -110,22 +109,22 @@ if(usable==false){
 	var address;
 	
 	if(''==select_dev){
-		console.err('cannot find proper net deivce , please manually assign one by -d or --device');
+		console.error('cannot find proper net deivce , please manually assign one by -d or --device');
 	}
 	if(args.suffix){
 		if(args.suffix.split(':').length!=4){
-			console.err('suffix must be 64 bit long');
+			console.error('suffix must be 64 bit long , with 4 parts splited by 3 \':\'');
 			process.exit(1);
 		}
 		address=prefix+args.suffix;
 	}
 	else{
-		address=prefix+eui64(nets()[select_dev][0].mac);
+		address=prefix+eui64_u(nets()[select_dev][0].mac);
 	}
-	console.log('add address '+address);
+	console.log('add address '+address+' on device '+select_dev);
 	eval(process.platform+'_add(\''+address+'\',\''+dev+'\')');
 }
-var eui64=eui64_u;
+
 function eui64_l(mac){
 	let str=mac.split(':');
 	return str[0]+str[1]+':'+str[2]+'ff'+':'+'fe'+str[3]+':'+str[4]+str[5];
@@ -142,20 +141,21 @@ function eui64_u(mac){
 
 
 function linux_add(ip,dev){
-	cp.exec('ip -6 address add '+ip+'/64 dev '+dev);
+	cp.exec('ip -6 address add '+ip+'/64 dev '+dev,(r,so,se)=>{console.log(r,so,se)});
 }
 
 function win32_add(ip,dev){
-	console.log('not implemented');
-	process.exit(1);
+	cp.exec('powershell \'new-netipaddress  '+ip+' -InterfaceAlias '+dev+"'",(r,so,se)=>{console.log(r,so,se)});
+
 }
 
 function linux_rm(ip,dev){
-	cp.exec('ip -6 address del '+ip+'/64 dev '+dev);
+	cp.exec('ip -6 address del '+ip+'/64 dev '+dev,(r,so,se)=>{console.log(r,so,se)});
 }
 
-function win32_rm(ip){
-	cp.exec('powershell remove-netipaddress '+ip+' -confirm:$false');
+function win32_rm(ip,dev){
+	console.log('powershell \'remove-netipaddress '+ip+' -confirm:$false\'');
+	cp.exec('powershell \'remove-netipaddress '+ip+' -confirm:$false\'',(r,so,se)=>{console.log(r,so,se)});
 }
 
 
@@ -169,10 +169,10 @@ function loop(){
 			if(add.family!='IPv6')continue;
 			if(add.address.search(RegExp(rm_prefix))==-1)continue;
 			if(add.address.search(RegExp(prefix))!=-1){
-				console.log('using address '+add.address);
+				console.log('using address '+add.address+' on device '+dev);
 				continue;
 			}
-			console.log('delete address '+add.address);
+			console.log('delete address '+add.address+' on device '+dev);
 			eval(process.platform+'_rm(\''+add.address+'\',\''+dev+'\')');
 
 		}
@@ -188,10 +188,10 @@ function loop_spec(){
 		if(add.family!='IPv6')continue;
 		if(add.address.search(RegExp(rm_prefix))==-1)continue;
 		if(add.address.search(RegExp(prefix))!=-1){
-			console.log('using address '+add.address);
+			console.log('using address '+add.address+' on device '+select_dev);
 			continue;
 		}
-		console.log('delete address '+add.address);
+		console.log('delete address '+add.address+' on device '+select_dev);
 		eval(process.platform+'_rm(\''+add.address+'\',\''+select_dev+'\')');
 	}
 };
