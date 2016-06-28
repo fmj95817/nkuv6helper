@@ -61,8 +61,13 @@ else if(args.location){
 	rm_prefix=adds[args.location].rm_prefix;
 	prefix=adds[args.location].prefix;
 }else{
-	rm_prefix=adds[adds.default].rm_prefix;
-	prefix=adds[adds.default].prefix;
+	//
+	var index=-1;
+	while(index==-1){index=require('readline-sync').keyInSelect(Object.keys(adds),"select your location")};
+	rm_prefix=adds[Object.keys(adds)[index]].rm_prefix;
+	prefix=adds[Object.keys(adds)[index]].prefix;
+
+	
 }
 
 //initialze routine
@@ -141,21 +146,22 @@ function eui64_u(mac){
 
 
 function linux_add(ip,dev){
-	cp.exec('ip -6 address add '+ip+'/64 dev '+dev,(r,so,se)=>{console.log(r,so,se)});
+	cp.exec('ip -6 address add '+ip+'/64 dev '+dev,(r,so,se)=>{console.log(so)});
 }
 
 function win32_add(ip,dev){
-	cp.exec('powershell \'new-netipaddress  '+ip+' -InterfaceAlias '+dev+"'",(r,so,se)=>{console.log(r,so,se)});
+	cp.exec('powershell new-netipaddress  '+ip+' -InterfaceAlias '+dev,(r,so,se)=>{console.log(so)})
+		.stdin.end();
 
 }
 
 function linux_rm(ip,dev){
-	cp.exec('ip -6 address del '+ip+'/64 dev '+dev,(r,so,se)=>{console.log(r,so,se)});
+	cp.exec('ip -6 address del '+ip+'/64 dev '+dev,(r,so,se)=>{console.log(so)});
 }
 
 function win32_rm(ip,dev){
-	console.log('powershell \'remove-netipaddress '+ip+' -confirm:$false\'');
-	cp.exec('powershell \'remove-netipaddress '+ip+' -confirm:$false\'',(r,so,se)=>{console.log(r,so,se)});
+	cp.exec('powershell remove-netipaddress '+ip+' -confirm:$false',(r,so,se)=>{console.log(so)})
+		.stdin.end();
 }
 
 

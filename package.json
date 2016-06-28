@@ -9,6 +9,7 @@
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
+    "readline-sync": "^1.4.4",
     "yargs": "^4.7.1"
   }
 }
