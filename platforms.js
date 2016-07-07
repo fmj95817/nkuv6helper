@@ -1,36 +1,50 @@
+'use strict';
 const exec=require('child_process').exec;
+const request=require('http').request;
+const execSync=require('child_process').execSync
+
 module.exports={
 	linux:{
-		add:(ip,dev)=>{
-            exec('ip -6 address add '+ip+'/64 dev '+dev,(r,so,se)=>{console.log(so)});
+		add:(ip,dev,callback,payload)=>{
+            console.log('adding address ',ip,'on device ',dev);
+            if(callback)exec('ip -6 address add '+ip+'/64 dev '+dev,(e,so,se)=>{callback(e,so,se,payload)});
+            else exec('ip -6 address add '+ip+'/64 dev '+dev);
         },
-        rm:(ip,dev)=>{
-            exec('ip -6 address del '+ip+'/64 dev '+dev,(r,so,se)=>{console.log(so)});
+        rm:(ip,dev,callback,payload)=>{
+            console.log('delete address ',ip,'on device ',dev);
+            if(callback)exec('ip -6 address del '+ip+'/64 dev '+dev,(e,so,se)=>{callback(e,so,se,payload)});
+            else exec('ip -6 address del '+ip+'/64 dev '+dev);
         },
-        tst:(ip,callback)=>{
-            var req=require('dns').request({
-                host:2001:250:401:44::130,
-                family:6,
-                localAddress:ip,
-                agent:false
-            },(res)=>{
-                callback(true);
-            }).on('error',(e)=>{
-                callback(false);
-            }).end();
-        }
-		},
+        test:test
+    },
     win32:{
-        add:(ip,dev)=>{
-            exec('powershell new-netipaddress  '+ip+' -InterfaceAlias '+dev,(r,so,se)=>{console.log(so)})
-            .stdin.end();
+        add:(ip,dev,callback,payload)=>{
+            console.log('adding address ',ip,'on device ',dev);
+            if(callback)exec('powershell new-netipaddress  '+ip+' -InterfaceAlias '+dev,(e,so,se)=>{callback(e,so,se,payload)}).stdin.end();
+            else exec('powershell new-netipaddress  '+ip+' -InterfaceAlias '+dev).stdin.end();
         },
-        rm:(ip,dev)=>{
-            exec('powershell remove-netipaddress '+ip+' -confirm:$false',(r,so,se)=>{console.log(so)})
-            .stdin.end();
+        rm:(ip,dev,callback,payload)=>{
+            console.log('delete address ',ip,'on device ',dev);
+            if(callback)exec('powershell remove-netipaddress '+ip+' -InterfaceAlias '+dev+' -confirm:$false',(e,so,se)=>{callback(e,so,se,payload)}).stdin.end();
+            else exec('powershell remove-netipaddress '+ip+' -InterfaceAlias '+dev+' -confirm:$false').stdin.end();
         },
-        tst:undefined
+        test:test
     }
 }
 
-module.exports.win32.tst=module.exports.linux.tst;
+function test(callback,payload){
+    execSync('powershell get-netipaddress '+payload.ip);
+    request({
+        host:'2001:250:401:44::130',
+        family:6,
+        localAddress:payload.ip,
+        agent:false,
+        timeout:50
+    },()=>{
+        console.log('ip usable',payload.ip)
+        callback(payload,true);
+    }).on('error',()=>{
+        console.log('ip unusable',payload.ip)
+        callback(payload,false);
+    }).setTimeout(50).end();
+}
