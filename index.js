@@ -20,7 +20,7 @@ const args = require('yargs')
             demand: true,
             choices:Object.keys(interfaces())},
         detect:{
-            describe:'enable if you want to perform a address detection',
+            describe:'perform a address detection',
             type:'boolean'
 
         }
