@@ -30,4 +30,4 @@ if you want support for new location please post an issue with your location and
 
 address detection will take **more than 2 hours**, with heavy CPU usage. working on this to optimize CPU and time required.
 
-detection relies on server at **20001:250:401:44::130** port 80 running normally. If not you should modify the address in function "test" in file "platforms.js".
+detection relies on server at **2001:250:401:44::130** port 80 running normally. If not you should modify the address in function "test" in file "platforms.js".
