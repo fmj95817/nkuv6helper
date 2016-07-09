@@ -119,17 +119,18 @@ function detect(rmPre,suf) {
         main();
         return;
     }
-    if(options.subnets.length==0)return;
     var pre,ip;
-    for(var i=3;i>=0;i--){
-        pre=options.subnets.shift();
-        ip=mk_ip(pre,suf);
-        options.add(ip,options.dev,(e,so,se,payload)=>{
-            options.test((payload,usable)=>{
-                if(usable)options.pre=payload.pre;
-                else options.rm(payload.ip,options.dev);
-            },payload)
-        },{pre:pre,ip:ip});
+    for(var i=8;i>0;i--){
+        // pre=options.subnets.shift();
+        // ip=mk_ip(pre,suf);
+        // options.add(ip,options.dev,(e,so,se,payload)=>{
+        //     options.test((payload,usable)=>{
+        //         if(usable)options.pre=payload.pre;
+        //         else options.rm(payload.ip,options.dev);
+        //     },payload)
+        // },{pre:pre,ip:ip});
+
+        if(options.subnets.length==0)return;
         pre=options.subnets.pop();
         ip=mk_ip(pre,suf);
         options.add(ip,options.dev,(e,so,se,payload)=>{
