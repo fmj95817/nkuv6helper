@@ -47,19 +47,28 @@ function mk_ip(preStr,sufStr){
     return pre.join(':')+'::'+suf.join(':');
 }
 
-function subnets(pre){
-    // return ['2001:250:401:3610','2001:250:401:3513','2001:250:401:3611','2001:250:401:3514','2001:250:401:3612','2001:250:401:3613','2001:250:401:3614','2001:250:401:3914'];
+// function subnets(pre){
+//     // return ['2001:250:401:3610','2001:250:401:3513','2001:250:401:3611','2001:250:401:3514','2001:250:401:3612','2001:250:401:3613','2001:250:401:3614','2001:250:401:3914'];
+//     var ret=Array.from({length:65536},(v,k)=>{return pre+k.toString(16)});
+//     var rand,tmp;
+//     for (var cIndex = 65535; cIndex >0; cIndex--) {//Fisher-Yate shuffle
+//         rand=(Math.random()*(cIndex+1))|0;//x|0 do the same thing as Math.floor(x)
+//         tmp=ret[cIndex];
+//         ret[cIndex]=ret[rand];
+//         ret[rand]=tmp;
+//     }
+//     return ret;
+// }
+function* subnets(pre){
     var ret=Array.from({length:65536},(v,k)=>{return pre+k.toString(16)});
     var rand,tmp;
     for (var cIndex = 65535; cIndex >0; cIndex--) {//Fisher-Yate shuffle
         rand=(Math.random()*(cIndex+1))|0;//x|0 do the same thing as Math.floor(x)
-        tmp=ret[cIndex];
-        ret[cIndex]=ret[rand];
-        ret[rand]=tmp;
+        tmp=ret[rand];
+        ret[rand]=ret[cIndex];
+        yield tmp;
     }
-    return ret;
 }
-
 //inistalize routine goes here
 
 var options={
@@ -101,12 +110,14 @@ var options={
     if(!options.rmPre)options.rmPre='2001:250:401:';
     if(!options.pre){
         if(!args.detect){
-            console.log('prefix not assigned. Do you want to detect prefix?\nrun with option \"--detect\" for a auto detection');
+            console.error('prefix not assigned. Do you want to detect prefix?\nrun with option \"--detect\" for a auto detection');
             process.exit(1);
         }
+
         let ips=interfaces();
         for(var ip of ips[options.dev])if(ip.address.search(RegExp(options.rmPre))!=-1)options.rm(ip.address,options.dev);
         process.on('beforeExit',()=>{process.nextTick(()=>{detect(options.rmPre,options.suf)})});
+
     }else process.on('beforeExit',()=>{setTimeout(main,500)});
 })();
 
@@ -119,7 +130,7 @@ function detect(rmPre,suf) {
         main();
         return;
     }
-    var pre,ip;
+    var next,pre,ip;
     for(var i=8;i>0;i--){
         // pre=options.subnets.shift();
         // ip=mk_ip(pre,suf);
@@ -130,8 +141,11 @@ function detect(rmPre,suf) {
         //     },payload)
         // },{pre:pre,ip:ip});
 
-        if(options.subnets.length==0)return;
-        pre=options.subnets.pop();
+        // if(options.subnets.length==0)return;
+        // pre=options.subnets.next();
+        next=options.subnets.next();
+        if(next.done)return;
+        pre=next.value;
         ip=mk_ip(pre,suf);
         options.add(ip,options.dev,(e,so,se,payload)=>{
             options.test((payload,usable)=>{
@@ -140,10 +154,13 @@ function detect(rmPre,suf) {
             },payload)
         },{pre:pre,ip:ip});
     }
-    console.log('remaining',options.subnets.length);
 }
+
 function main(){
-    if(!options.pre)return;
+    if(!options.pre||!options.rmPre){
+        console.error('initialize routine unfinished when starting address modification');
+        process.exit(1);
+    }
     var ips=interfaces();
     var usable=false;
     for(var ip of ips[options.dev]){
