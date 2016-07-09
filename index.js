@@ -48,7 +48,6 @@ function mk_ip(preStr,sufStr){
 }
 
 // function subnets(pre){
-//     // return ['2001:250:401:3610','2001:250:401:3513','2001:250:401:3611','2001:250:401:3514','2001:250:401:3612','2001:250:401:3613','2001:250:401:3614','2001:250:401:3914'];
 //     var ret=Array.from({length:65536},(v,k)=>{return pre+k.toString(16)});
 //     var rand,tmp;
 //     for (var cIndex = 65535; cIndex >0; cIndex--) {//Fisher-Yate shuffle
@@ -59,6 +58,7 @@ function mk_ip(preStr,sufStr){
 //     }
 //     return ret;
 // }
+
 function* subnets(pre){
     var ret=Array.from({length:65536},(v,k)=>{return pre+k.toString(16)});
     var rand,tmp;
@@ -132,17 +132,9 @@ function detect(rmPre,suf) {
     }
     var next,pre,ip;
     for(var i=8;i>0;i--){
-        // pre=options.subnets.shift();
-        // ip=mk_ip(pre,suf);
-        // options.add(ip,options.dev,(e,so,se,payload)=>{
-        //     options.test((payload,usable)=>{
-        //         if(usable)options.pre=payload.pre;
-        //         else options.rm(payload.ip,options.dev);
-        //     },payload)
-        // },{pre:pre,ip:ip});
-
         // if(options.subnets.length==0)return;
-        // pre=options.subnets.next();
+        // pre=options.subnets.shift();
+        // pre=options.subnets.pop();
         next=options.subnets.next();
         if(next.done)return;
         pre=next.value;
