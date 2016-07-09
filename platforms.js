@@ -1,7 +1,7 @@
 'use strict';
 const exec=require('child_process').exec;
 const request=require('http').request;
-const execSync=require('child_process').execSync
+const execSync=require('child_process').execSync;
 
 module.exports={
 	linux:{

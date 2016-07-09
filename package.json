@@ -4,7 +4,7 @@
   "description": "useless ipv6 addresses remover",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./index.js --dev WLAN --detect"
   },
   "author": "",
   "license": "GPL-3.0",
