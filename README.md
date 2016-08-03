@@ -1,15 +1,12 @@
 # nkuv6helper
-remove useless extra ipv6 stateless addresses given by the stupid routers.
-
-so that you can access ipv6 net with the correct ipv6 address.
+remove useless extra ipv6 stateless addresses given by wrong routers, so that you can access ipv6 net with correct address.
 
 #Options:
   --rmPre   prefix to remove  [string]
 
   --pre     prefix to preserve and prefix of address to add  [string]
 
-
-  --loc     your location, to determine prefixs if not assigned  [string]
+  --loc     your location to determine prefixs.  [string]
 
   --suf     suffix of address to add,default is eui64  [string]
 
@@ -31,4 +28,4 @@ if you want support for new location please post an issue with your location and
 address detection will take **more than 2 hours**, with heavy CPU usage. working on this to optimize CPU and time required.
 
 
-detection relies on server at **2001:250:401:44::130** port 80 running normally. If not you should modify the address in function "test" in file "platforms.js".
+detection relies on server at **2001:250:401:44::130** port 8085 running normally. If not you should modify the address in function "test" in file "platforms.js".
