@@ -6,7 +6,7 @@ remove useless extra ipv6 stateless addresses given by wrong routers, so that yo
 
   --pre     prefix to preserve and prefix of address to add  [string]
 
-  --loc     your location to determine prefixs.  [string]
+  --loc     your location to determine prefixs if not assigned.  [string]
 
   --suf     suffix of address to add,default is eui64  [string]
 
