@@ -42,7 +42,7 @@ var eui64=eui64_universal;
 function mk_ip(preStr,sufStr){
     var pre=preStr.split(':');
     var suf=sufStr.split(':');
-    if(pre[pre.length-1]=='')prestr.pop();
+    if(pre[pre.length-1]=='')preStr.pop();
     if(pre.length+suf.length==8)return pre.join(':')+':'+suf.join(':');
     return pre.join(':')+'::'+suf.join(':');
 }
