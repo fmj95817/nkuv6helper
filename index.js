@@ -135,21 +135,21 @@ function detect(rmPre, suf) {
         main();
         return;
     }
-    var next, pre, ip;
+    var next;
     for (var i = 8; i > 0; i--) {
         // if(options.subnets.length==0)return;
         // pre=options.subnets.shift();
         // pre=options.subnets.pop();
         next = options.subnets.next();
         if (next.done) return;
-        pre = next.value;
-        ip = mk_ip(pre, suf);
-        options.add(ip, options.dev, (e, so, se, payload) => {
-            options.test((payload, usable) => {
-                if (usable) options.pre = payload.pre;
-                else options.rm(payload.ip, options.dev);
-            }, payload)
-        }, { pre: pre, ip: ip });
+        let pre = next.value;
+        let ip = mk_ip(pre, suf);
+        options.add(ip, options.dev, (e, so, se) => {
+            options.test((ip, usable) => {
+                if (usable) options.pre = pre;
+                else options.rm(ip, options.dev);
+            })
+        });
     }
 }
 
