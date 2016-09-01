@@ -5,7 +5,7 @@ const execSync=require('child_process').execSync;
 
 module.exports={
 	linux:{
-		add:(ip,dev,callback)=>{
+	add:(ip,dev,callback)=>{
             console.log('adding address ',ip,'on device ',dev);
             if(callback)exec('ip -6 address add '+ip+'/64 dev '+dev,(e,so,se)=>{callback(e,so,se)});
             else exec('ip -6 address add '+ip+'/64 dev '+dev);
