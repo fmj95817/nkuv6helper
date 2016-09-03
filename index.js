@@ -52,17 +52,6 @@ function mk_ip(preStr, sufStr) {
     return pre.join(':') + '::' + suf.join(':');
 }
 
-// function subnets(pre){
-//     var ret=Array.from({length:65536},(v,k)=>{return pre+k.toString(16)});
-//     var rand,tmp;
-//     for (var cIndex = 65535; cIndex >0; cIndex--) {//Fisher-Yate shuffle
-//         rand=(Math.random()*(cIndex+1))|0;//x|0 do the same thing as Math.floor(x)
-//         tmp=ret[cIndex];
-//         ret[cIndex]=ret[rand];
-//         ret[rand]=tmp;
-//     }
-//     return ret;
-// }
 
 function* subnets(pre) {
     var ret = Array.from({ length: 65536 }, (v, k) => { return pre + k.toString(16) });
@@ -74,6 +63,7 @@ function* subnets(pre) {
         yield tmp;
     }
 }
+
 //inistalize routine goes here
 
 var options = {
@@ -137,9 +127,6 @@ function detect(rmPre, suf) {
     }
     var next;
     for (var i = 8; i > 0; i--) {
-        // if(options.subnets.length==0)return;
-        // pre=options.subnets.shift();
-        // pre=options.subnets.pop();
         next = options.subnets.next();
         if (next.done) return;
         let pre = next.value;
@@ -154,23 +141,19 @@ function detect(rmPre, suf) {
 }
 
 function main() {
-    if (!options.pre || !options.rmPre) {
-        console.error('initialize routine unfinished when starting address modification');
-        process.exit(1);
-    }
     var ips = interfaces();
     var usable = false;
     for (var ip of ips[options.dev]) {
         if (ip.family != 'IPv6') continue;
         if (ip.address.search(RegExp(options.rmPre)) == -1) {
             if (ip.address.search(RegExp(options.pre)) != -1) {
-                console.log('using address ', ip.address, 'on device ', options.dev);
+                // console.log('using address ', ip.address, 'on device ', options.dev);
                 usable = true;
             }
             continue;
         }
         if (ip.address.search(RegExp(options.pre)) != -1) {
-            console.log('using address ', ip.address, 'on device ', options.dev);
+            // console.log('using address ', ip.address, 'on device ', options.dev);
             usable = true;
             continue;
         }
