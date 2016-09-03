@@ -32,7 +32,7 @@ module.exports={
         }
     },
     win32:{
-        add:(ip,dev)=>{
+        add:(ip,dev,callback)=>{
             console.log('adding address ',ip,'on device ',dev);
             if(callback)exec('powershell new-netipaddress  '+ip+' -InterfaceAlias '+dev,(e,so,se)=>{callback(e,so,se)}).stdin.end();
             else exec('powershell new-netipaddress  '+ip+' -InterfaceAlias '+dev).stdin.end();

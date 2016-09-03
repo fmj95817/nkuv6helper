@@ -47,7 +47,7 @@ var eui64 = eui64_universal;
 function mk_ip(preStr, sufStr) {
     var pre = preStr.split(':');
     var suf = sufStr.split(':');
-    if (pre[pre.length - 1] == '') preStr.pop();
+    if (pre[pre.length - 1] == '') pre.pop();
     if (pre.length + suf.length == 8) return pre.join(':') + ':' + suf.join(':');
     return pre.join(':') + '::' + suf.join(':');
 }
@@ -145,7 +145,7 @@ function detect(rmPre, suf) {
         let pre = next.value;
         let ip = mk_ip(pre, suf);
         options.add(ip, options.dev, (e, so, se) => {
-            options.test((ip, usable) => {
+            options.test(ip,(usable) => {
                 if (usable) options.pre = pre;
                 else options.rm(ip, options.dev);
             })
