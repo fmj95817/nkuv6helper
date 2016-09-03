@@ -1,59 +1,59 @@
 'use strict';
-const exec=require('child_process').exec;
-const request=require('http').request;
-const execSync=require('child_process').execSync;
+const exec = require('child_process').exec;
+const request = require('http').request;
+const execSync = require('child_process').execSync;
 
-module.exports={
-    linux:{
-	add:(ip,dev,callback)=>{
+module.exports = {
+    linux: {
+        add: (ip, dev, callback) => {
             // console.log('adding address ',ip,'on device ',dev);
-            if(callback)exec('ip -6 address add '+ip+'/64 dev '+dev,(e,so,se)=>{callback(e,so,se)});
-            else exec('ip -6 address add '+ip+'/64 dev '+dev);
+            if (callback) exec('ip -6 address add ' + ip + '/64 dev ' + dev, (e, so, se) => { callback(e, so, se) });
+            else exec('ip -6 address add ' + ip + '/64 dev ' + dev);
         },
-        rm:(ip,dev,callback)=>{
+        rm: (ip, dev, callback) => {
             // console.log('delete address ',ip,'on device ',dev);
-            if(callback)exec('ip -6 address del '+ip+'/64 dev '+dev,(e,so,se)=>{callback(e,so,se)});
-            else exec('ip -6 address del '+ip+'/64 dev '+dev);
+            if (callback) exec('ip -6 address del ' + ip + '/64 dev ' + dev, (e, so, se) => { callback(e, so, se) });
+            else exec('ip -6 address del ' + ip + '/64 dev ' + dev);
         },
-        test:(ip,callback)=>{
+        test: (ip, callback) => {
             request({
-                host:'2001:250:401:44::130',
-                family:6,
-                localAddress:ip,
-                agent:false,
-                timeout:50
-            },()=>{
+                host: '2001:250:401:44::130',
+                family: 6,
+                localAddress: ip,
+                agent: false,
+                timeout: 50
+            }, () => {
                 // console.log('ip usable',ip)
                 callback(true);
-            }).on('error',()=>{
+            }).on('error', () => {
                 // console.log('ip unusable',ip)
                 callback(false);
             }).setTimeout(50).end();
         }
     },
-    win32:{
-        add:(ip,dev,callback)=>{
+    win32: {
+        add: (ip, dev, callback) => {
             // console.log('adding address ',ip,'on device ',dev);
-            if(callback)exec('powershell new-netipaddress  '+ip+' -InterfaceAlias '+dev,(e,so,se)=>{callback(e,so,se)}).stdin.end();
-            else exec('powershell new-netipaddress  '+ip+' -InterfaceAlias '+dev).stdin.end();
+            if (callback) exec('powershell new-netipaddress  ' + ip + ' -InterfaceAlias ' + dev, (e, so, se) => { callback(e, so, se) }).stdin.end();
+            else exec('powershell new-netipaddress  ' + ip + ' -InterfaceAlias ' + dev).stdin.end();
         },
-        rm:(ip,dev,callback)=>{
+        rm: (ip, dev, callback) => {
             // console.log('delete address ',ip,'on device ',dev);
-            if(callback)exec('powershell remove-netipaddress '+ip+' -InterfaceAlias '+dev+' -confirm:$false',(e,so,se)=>{callback(e,so,se)}).stdin.end();
-            else exec('powershell remove-netipaddress '+ip+' -InterfaceAlias '+dev+' -confirm:$false').stdin.end();
+            if (callback) exec('powershell remove-netipaddress ' + ip + ' -InterfaceAlias ' + dev + ' -confirm:$false', (e, so, se) => { callback(e, so, se) }).stdin.end();
+            else exec('powershell remove-netipaddress ' + ip + ' -InterfaceAlias ' + dev + ' -confirm:$false').stdin.end();
         },
-        test:(ip,callback)=>{
-            execSync('powershell get-netipaddress '+ip);
+        test: (ip, callback) => {
+            execSync('powershell get-netipaddress ' + ip);
             request({
-                host:'2001:250:401:44::130',
-                family:6,
-                localAddress:ip,
-                agent:false,
-                timeout:50
-            },()=>{
+                host: '2001:250:401:44::130',
+                family: 6,
+                localAddress: ip,
+                agent: false,
+                timeout: 50
+            }, () => {
                 // console.log('ip usable',ip)
                 callback(true);
-            }).on('error',()=>{
+            }).on('error', () => {
                 // console.log('ip unusable',ip)
                 callback(false);
             }).setTimeout(50).end();

@@ -116,7 +116,13 @@ var options = {
     } else process.on('beforeExit', () => { setTimeout(main, 500) });
 })();
 
+var next = { done: false };
+
 function detect(rmPre, suf) {
+    if (next.done) {
+        console.log('no usable address detected');
+        process.exit(1);
+    }
     if (!options.subnets) options.subnets = subnets(rmPre);
     if (options.pre) {
         process.removeAllListeners('beforeExit');
@@ -125,14 +131,14 @@ function detect(rmPre, suf) {
         main();
         return;
     }
-    var next;
+
     for (var i = 8; i > 0; i--) {
         next = options.subnets.next();
         if (next.done) return;
         let pre = next.value;
         let ip = mk_ip(pre, suf);
         options.add(ip, options.dev, (e, so, se) => {
-            options.test(ip,(usable) => {
+            options.test(ip, (usable) => {
                 if (usable) options.pre = pre;
                 else options.rm(ip, options.dev);
             })
