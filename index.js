@@ -54,7 +54,7 @@ function mk_ip(preStr, sufStr) {
 
 
 function* subnets(pre) {
-    var ret = Array.from({ length: 65536 }, (v, k) => { return pre + k.toString(16) });
+    var ret = Array.from({ length: 65536 }, (v, k) => { return pre + k.toString(16); });
     var rand, tmp;
     for (var cIndex = 65535; cIndex > 0; cIndex--) {//Fisher-Yate shuffle
         rand = (Math.random() * (cIndex + 1)) | 0;//x|0 do the same thing as Math.floor(x)
@@ -111,9 +111,9 @@ var options = {
 
         let ips = interfaces();
         for (var ip of ips[options.dev]) if (ip.address.search(RegExp(options.rmPre)) != -1) options.rm(ip.address, options.dev);
-        process.on('beforeExit', () => { process.nextTick(() => { detect(options.rmPre, options.suf) }) });
+        process.on('beforeExit', () => { process.nextTick(() => { detect(options.rmPre, options.suf); }); });
 
-    } else process.on('beforeExit', () => { setTimeout(main, 500) });
+    } else process.on('beforeExit', () => { setTimeout(main, 500); });
 })();
 
 var next = { done: false };
@@ -126,7 +126,7 @@ function detect(rmPre, suf) {
     if (!options.subnets) options.subnets = subnets(rmPre);
     if (options.pre) {
         process.removeAllListeners('beforeExit');
-        process.on('beforeExit', () => { setTimeout(main, 500) });
+        process.on('beforeExit', () => { setTimeout(main, 500); });
         delete options.subnets;
         main();
         return;
@@ -141,13 +141,16 @@ function detect(rmPre, suf) {
             options.test(ip, (usable) => {
                 if (usable) options.pre = pre;
                 else options.rm(ip, options.dev);
-            })
+            });
         });
     }
 }
 
 function main() {
     var ips = interfaces();
+    if(!ips) {
+        return;
+    }
     var usable = false;
     for (var ip of ips[options.dev]) {
         if (ip.family != 'IPv6') continue;
