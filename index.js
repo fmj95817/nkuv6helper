@@ -1,5 +1,21 @@
 #!/bin/node
+
 'use strict';
+
+(function checkRoot() {
+    switch (process.platform) {
+        case 'linux':
+            if (process.getuid() > 0) {
+                console.error('require run as root');
+                process.exit(1);
+            }
+            break;
+        default:
+            console.log("please make sure the program is authorized with administrative privilege");
+            break;
+    }
+})();
+
 const interfaces = require('os').networkInterfaces;
 const args = require('yargs')
     .options({
@@ -54,10 +70,14 @@ function mk_ip(preStr, sufStr) {
 
 
 function* subnets(pre) {
-    var ret = Array.from({ length: 65536 }, (v, k) => { return pre + k.toString(16); });
+    var ret = Array.from({
+        length: 65536
+    }, (v, k) => {
+        return pre + k.toString(16);
+    });
     var rand, tmp;
-    for (var cIndex = 65535; cIndex > 0; cIndex--) {//Fisher-Yate shuffle
-        rand = (Math.random() * (cIndex + 1)) | 0;//x|0 do the same thing as Math.floor(x)
+    for (var cIndex = 65535; cIndex > 0; cIndex--) { //Fisher-Yate shuffle
+        rand = (Math.random() * (cIndex + 1)) | 0; //x|0 do the same thing as Math.floor(x)
         tmp = ret[rand];
         ret[rand] = ret[cIndex];
         yield tmp;
@@ -77,6 +97,7 @@ var options = {
     dev: args.dev,
     ip: undefined
 };
+
 
 (function gen_option() {
     if (!platforms[options.platform]) {
@@ -110,13 +131,22 @@ var options = {
         }
 
         let ips = interfaces();
-        for (var ip of ips[options.dev]) if (ip.address.search(RegExp(options.rmPre)) != -1) options.rm(ip.address, options.dev);
-        process.on('beforeExit', () => { process.nextTick(() => { detect(options.rmPre, options.suf); }); });
+        for (var ip of ips[options.dev])
+            if (ip.address.search(RegExp(options.rmPre)) != -1) options.rm(ip.address, options.dev);
+        process.on('beforeExit', () => {
+            process.nextTick(() => {
+                detect(options.rmPre, options.suf);
+            });
+        });
 
-    } else process.on('beforeExit', () => { setTimeout(main, 500); });
+    } else process.on('beforeExit', () => {
+        setTimeout(main, 500);
+    });
 })();
 
-var next = { done: false };
+var next = {
+    done: false
+};
 
 function detect(rmPre, suf) {
     if (next.done) {
@@ -126,7 +156,9 @@ function detect(rmPre, suf) {
     if (!options.subnets) options.subnets = subnets(rmPre);
     if (options.pre) {
         process.removeAllListeners('beforeExit');
-        process.on('beforeExit', () => { setTimeout(main, 500); });
+        process.on('beforeExit', () => {
+            setTimeout(main, 500);
+        });
         delete options.subnets;
         main();
         return;
@@ -148,7 +180,7 @@ function detect(rmPre, suf) {
 
 function main() {
     var ips = interfaces();
-    if(!ips) {
+    if (!ips) {
         return;
     }
     var usable = false;
@@ -166,10 +198,17 @@ function main() {
             usable = true;
             continue;
         }
-        options.rm(ip.address, options.dev);
+        options.rm(ip.address, options.dev, execErrHandler);
     }
     if (!usable) {
         if (!options.ip) options.ip = mk_ip(options.pre, options.suf);
-        options.add(options.ip, options.dev);
+        options.add(options.ip, options.dev, execErrHandler);
+    }
+}
+
+function execErrHandler(err, stdout, stderr) {
+    if(err != 0) {
+        console.log('\n', err.message);
+        process.exit(1);
     }
 }
