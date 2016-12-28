@@ -63,8 +63,8 @@ var eui64 = eui64_universal;
 function mk_ip(preStr, sufStr) {
     var pre = preStr.split(':');
     var suf = sufStr.split(':');
-    if (pre[pre.length - 1] == '') pre.pop();
-    if (pre.length + suf.length == 8) return pre.join(':') + ':' + suf.join(':');
+    if (pre[pre.length - 1] === '') pre.pop();
+    if (pre.length + suf.length === 8) return pre.join(':') + ':' + suf.join(':');
     return pre.join(':') + '::' + suf.join(':');
 }
 
@@ -132,7 +132,7 @@ var options = {
 
         let ips = interfaces();
         for (var ip of ips[options.dev])
-            if (ip.address.search(RegExp(options.rmPre)) != -1) options.rm(ip.address, options.dev);
+            if (ip.address.search(RegExp(options.rmPre)) !== -1) options.rm(ip.address, options.dev);
         process.on('beforeExit', () => {
             process.nextTick(() => {
                 detect(options.rmPre, options.suf);
@@ -185,15 +185,15 @@ function main() {
     }
     var usable = false;
     for (var ip of ips[options.dev]) {
-        if (ip.family != 'IPv6') continue;
-        if (ip.address.search(RegExp(options.rmPre)) == -1) {
-            if (ip.address.search(RegExp(options.pre)) != -1) {
+        if (ip.family !== 'IPv6') continue;
+        if (ip.address.search(RegExp(options.rmPre)) === -1) {
+            if (ip.address.search(RegExp(options.pre)) !== -1) {
                 // console.log('using address ', ip.address, 'on device ', options.dev);
                 usable = true;
             }
             continue;
         }
-        if (ip.address.search(RegExp(options.pre)) != -1) {
+        if (ip.address.search(RegExp(options.pre)) !== -1) {
             // console.log('using address ', ip.address, 'on device ', options.dev);
             usable = true;
             continue;
@@ -207,7 +207,7 @@ function main() {
 }
 
 function execErrHandler(err, stdout, stderr) {
-    if(err != 0) {
+    if(err !== 0) {
         console.log('\n', err.message);
         process.exit(1);
     }
