@@ -3,6 +3,10 @@ Because of the current changes of ipv6 system in nankai, you should not rely on 
 
 Currently support win32 and linux only. The support on android with termux or busybox is considered to be added.
 
+# TODO
++ The address detecting script should be modified to use _ipv6.tsinghua.edu.cn_
++ The support for android+termux should be added soon.
+
 # nkuv6helper
 remove useless extra ipv6 stateless addresses given by wrong routers, so that you can access ipv6 net with correct address.
 
