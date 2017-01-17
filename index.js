@@ -207,7 +207,7 @@ function main() {
 }
 
 function execErrHandler(err, stdout, stderr) {
-    if(err !== 0) {
+    if(err) {
         console.log('\n', err.message);
         process.exit(1);
     }

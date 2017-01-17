@@ -45,7 +45,7 @@ module.exports = {
         test: (ip, callback) => {
             execSync('powershell get-netipaddress ' + ip);
             request({
-                host: '2001:250:401:44::130',
+                host: 'ipv6.tuna.tsinghua.edu.cn',
                 family: 6,
                 localAddress: ip,
                 agent: false,
