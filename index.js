@@ -180,34 +180,35 @@ function detect(rmPre, suf) {
 
 function main() {
     var ips = interfaces();
-    if (!ips) {
-        return;
-    }
     var usable = false;
-    for (var ip of ips[options.dev]) {
-        if (ip.family !== 'IPv6') continue;
-        if (ip.address.search(RegExp(options.rmPre)) === -1) {
+    try {
+        for (var ip of ips[options.dev]) {
+            if (ip.family !== 'IPv6') continue;
+            if (ip.address.search(RegExp(options.rmPre)) === -1) {
+                if (ip.address.search(RegExp(options.pre)) !== -1) {
+                    // console.log('using address ', ip.address, 'on device ', options.dev);
+                    usable = true;
+                }
+                continue;
+            }
             if (ip.address.search(RegExp(options.pre)) !== -1) {
                 // console.log('using address ', ip.address, 'on device ', options.dev);
                 usable = true;
+                continue;
             }
-            continue;
+            options.rm(ip.address, options.dev, execErrHandler);
         }
-        if (ip.address.search(RegExp(options.pre)) !== -1) {
-            // console.log('using address ', ip.address, 'on device ', options.dev);
-            usable = true;
-            continue;
+        if (!usable) {
+            if (!options.ip) options.ip = mk_ip(options.pre, options.suf);
+            options.add(options.ip, options.dev, execErrHandler);
         }
-        options.rm(ip.address, options.dev, execErrHandler);
-    }
-    if (!usable) {
-        if (!options.ip) options.ip = mk_ip(options.pre, options.suf);
-        options.add(options.ip, options.dev, execErrHandler);
+    } catch (e) {
+
     }
 }
 
 function execErrHandler(err, stdout, stderr) {
-    if(err) {
+    if (err) {
         console.log('\n', err.message);
         process.exit(1);
     }
