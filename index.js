@@ -210,6 +210,6 @@ function main() {
 function execErrHandler(err, stdout, stderr) {
     if (err) {
         console.log('\n', err.message);
-        process.exit(1);
+        // process.exit(1);
     }
 }
