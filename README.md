@@ -1,7 +1,7 @@
 # NOTIFICATION
 Because of the current changes of ipv6 system in nankai, you should not rely on the behavior of the script before the addresses are updated.
 
-Currently support win32 and linux only. The support on android with termux or busybox is considered to be added.
+Currently support win32, linux and macOS. The support on android with termux or busybox is considered to be added.
 
 # TODO
 + The address detecting script should be modified to use _ipv6.tsinghua.edu.cn_
