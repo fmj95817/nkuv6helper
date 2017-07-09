@@ -31,6 +31,35 @@ module.exports = {
             }).setTimeout(50).end();
         }
     },
+
+    macOS: {
+        add: (ip, dev, callback) => {
+            // console.log('adding address ',ip,'on device ',dev);
+            if (callback) exec('ifconfig ' + dev + ' inet6 ' + ip + '/64 add' , (e, so, se) => { callback(e, so, se) });
+            else exec('ifconfig ' + dev + ' inet6 ' + ip + '/64 add');
+        },
+        rm: (ip, dev, callback) => {
+            // console.log('delete address ',ip,'on device ',dev);
+            if (callback) exec('ifconfig ' + dev + ' inet6 ' + ip + '/64 delete', (e, so, se) => { callback(e, so, se) });
+            else exec('ifconfig ' + dev + ' inet6 ' + ip + '/64 delete');
+        },
+        test: (ip, callback) => {
+            request({
+                host: '2001:250:401:44::130',
+                family: 6,
+                localAddress: ip,
+                agent: false,
+                timeout: 50
+            }, () => {
+                // console.log('ip usable',ip)
+                callback(true);
+            }).on('error', () => {
+                // console.log('ip unusable',ip)
+                callback(false);
+            }).setTimeout(50).end();
+        }
+    },
+
     win32: {
         add: (ip, dev, callback) => {
             // console.log('adding address ',ip,'on device ',dev);

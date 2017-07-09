@@ -39,3 +39,6 @@ jspm_packages
 *.old
 
 jsconfig.json
+
+.DS_Store
+.idea
